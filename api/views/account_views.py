@@ -1,4 +1,4 @@
-from rest_framework import viewsets, status
+from rest_framework import viewsets
 from rest_framework.decorators import action
 from rest_framework.response import Response
 
@@ -25,10 +25,7 @@ class UserViewSet(viewsets.ModelViewSet):
     @method_decorator(cache_page(60*1))
     @action(detail=True, methods=['get'])
     def posts(self, request, pk=None):
-        """
-        Kullaniciya ait gonderileri listeler.  
-        Redis uzerinde 1 dakika cachelenir.
-        """
+        """Kullaniciya ait gonderileri listeler."""
         user = self.get_object()
         posts = user.posts.all()
         serializer = PostSerializer(posts, many=True)
@@ -37,10 +34,7 @@ class UserViewSet(viewsets.ModelViewSet):
     @method_decorator(cache_page(60*1))
     @action(detail=True, methods=['get'])
     def albums(self, request, pk=None):
-        """ 
-        Kullaniciya ait albumleri listeler.   
-        Redis uzerinde 1 dakika cachelenir.
-        """
+        """ Kullaniciya ait albumleri listeler."""
         user = self.get_object()
         albums = user.albums.all()
         serializer = AlbumSerializer(albums, many=True)
@@ -53,7 +47,7 @@ class UserViewSet(viewsets.ModelViewSet):
         Kullaniciya ait gorevleri listeler.
 
         Todo islemlerinde sık yazma yapilabilir diye  
-        cachelemeyi devre disi biraktim.
+        cacheleme devre dısı.
         """
         user = self.get_object()
         todos = user.todos.all()

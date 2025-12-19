@@ -16,7 +16,18 @@ Projeyi Docker ile ayağa kaldırmak için:
 
 1. Projeyi klonlayın.
 2. Terminali proje dizininde açın.
-3. Aşağıdaki komutu çalıştırın:
+3. `manage.py` ile aynı dizinde **`.env`** dosyası oluşturun ve aşağıdaki ayarları kendinize göre düzenleyin:
+```bash
+SECRET_KEY='gizli key'
+DEBUG=True
+DB_NAME=taskdb
+DB_USER=postgres
+DB_PASSWORD=postgres
+DB_HOST=localhost
+DB_PORT=5432
+REDIS_URL=redis://127.0.0.1:6379/1
+```
+4. Aşağıdaki komutu çalıştırın:
 ```shell
 docker-compose up --build
 ```
@@ -31,14 +42,10 @@ adresine giderek API dökümantasyonuna erişebilir ve endpoint'leri test edebil
 
 ### 2.2. Lokal Çalıştırma
 
-Lokal çalıştırma için makinenizde PostgreSQL ve Redis'in kurulu olması gerekmektedir.
+Lokal çalıştırma için makinede PostgreSQL ve Redis'in kurulu olması gerekmektedir.
 
 1. Yeni bir Virtual Environment oluşturun ve aktif edin.
-2. Gerekli kütüphaneleri yükleyin:
-```bash
-pip install -r requirements.txt
-```
-3. `manage.py` ile aynı dizinde **`.env`** dosyası oluşturun ve aşağıdaki ayarları kendinize göre düzenleyin:
+2. `manage.py` ile aynı dizinde **`.env`** dosyası oluşturun ve aşağıdaki ayarları kendinize göre düzenleyin:
 ```bash
 SECRET_KEY='gizli key'
 DEBUG=True
@@ -49,7 +56,12 @@ DB_HOST=localhost
 DB_PORT=5432
 REDIS_URL=redis://127.0.0.1:6379/1
 ```
-4. Veritabanı tablolarını oluşturun (Migrate):
+3. Gerekli kütüphaneleri yükleyin:
+```bash
+pip install -r requirements.txt
+```
+
+4. Veritabanı tablolarını oluşturun:
 ```bash
 python manage.py migrate
 ```
@@ -70,12 +82,13 @@ Proje için CRUD işlemlerini, filtrelemeleri ve veri doğrulama senaryolarını
 Testleri **Docker** üzerinden çalıştırmak için:
 
 ```bash
-docker-compose exec web python manage.py test api
+docker-compose exec -e DJANGO_SETTINGS_MODULE=taskproject.settings_test web python manage.py test api
 ```
 
-Testleri **lokalde** çalıştırmak için:
+Testleri **lokalde** çalıştırmak için terminalde şu komutu çalıştırın:
 
 ```bash
+$env:DJANGO_SETTINGS_MODULE="taskproject.settings_test"
 python manage.py test api
 ```
 
@@ -106,22 +119,22 @@ Aşağıdaki tablolar, API üzerindeki işlemleri ve kullanılabilir metodları 
 
 #### 2. Gönderi İşlemleri (Posts)
 
-| İşlem                 | URL Yolu                  | Metodlar                                                          | Açıklama                                           |
-| :-------------------- | :------------------------ | :---------------------------------------------------------------- | :------------------------------------------------- |
-| Post Listesi          | `/api/posts/`             | ![](https://img.shields.io/badge/GET-2ea44f?style=flat-square)    | Tüm gönderileri listeler.                          |
-| Post Listesi (Filtre) | `/api/posts/?userId={id}` | ![](https://img.shields.io/badge/GET-2ea44f?style=flat-square)    | Belirli bir kullanıcıya ait gönderileri filtreler. |
-| Post Oluştur          | `/api/posts/`             | ![](https://img.shields.io/badge/POST-007ec6?style=flat-square)   | Yeni bir gönderi oluşturur.                        |
-| Post Detayı           | `/api/posts/{id}/`        | ![](https://img.shields.io/badge/GET-2ea44f?style=flat-square)    | Belirtilen ID'ye sahip gönderiyi getirir.          |
-| Post Güncelle         | `/api/posts/{id}/`        | ![](https://img.shields.io/badge/PUT-f9a825?style=flat-square)    | Gönderi bilgilerini tamamen değiştirir.            |
-| Post Düzenle          | `/api/posts/{id}/`        | ![](https://img.shields.io/badge/PATCH-f9a825?style=flat-square)  | Gönderi bilgilerini kısmi olarak günceller.        |
-| Post Sil              | `/api/posts/{id}/`        | ![](https://img.shields.io/badge/DELETE-d32f2f?style=flat-square) | Gönderiyi siler.                                   |
+| İşlem                 | URL Yolu                | Metodlar                                                          | Açıklama                                           |
+| :-------------------- | :---------------------- | :---------------------------------------------------------------- | :------------------------------------------------- |
+| Post Listesi          | `/api/posts/`           | ![](https://img.shields.io/badge/GET-2ea44f?style=flat-square)    | Tüm gönderileri listeler.                          |
+| Post Listesi (Filtre) | `/api/posts/?user={id}` | ![](https://img.shields.io/badge/GET-2ea44f?style=flat-square)    | Belirli bir kullanıcıya ait gönderileri filtreler. |
+| Post Oluştur          | `/api/posts/`           | ![](https://img.shields.io/badge/POST-007ec6?style=flat-square)   | Yeni bir gönderi oluşturur.                        |
+| Post Detayı           | `/api/posts/{id}/`      | ![](https://img.shields.io/badge/GET-2ea44f?style=flat-square)    | Belirtilen ID'ye sahip gönderiyi getirir.          |
+| Post Güncelle         | `/api/posts/{id}/`      | ![](https://img.shields.io/badge/PUT-f9a825?style=flat-square)    | Gönderi bilgilerini tamamen değiştirir.            |
+| Post Düzenle          | `/api/posts/{id}/`      | ![](https://img.shields.io/badge/PATCH-f9a825?style=flat-square)  | Gönderi bilgilerini kısmi olarak günceller.        |
+| Post Sil              | `/api/posts/{id}/`      | ![](https://img.shields.io/badge/DELETE-d32f2f?style=flat-square) | Gönderiyi siler.                                   |
 
 #### 3. Yorum İşlemleri (Comments)
 
 | İşlem                        | URL Yolu                       | Metodlar                                                          | Açıklama                                              |
 | :--------------------------- | :----------------------------- | :---------------------------------------------------------------- | :---------------------------------------------------- |
 | Yorum Listesi                | `/api/comments/`               | ![](https://img.shields.io/badge/GET-2ea44f?style=flat-square)    | Tüm yorumları listeler.                               |
-| Yorum Listesi (Post Filtre)  | `/api/comments/?postId={id}`   | ![](https://img.shields.io/badge/GET-2ea44f?style=flat-square)    | Belirli bir gönderiye ait yorumları filtreler.        |
+| Yorum Listesi (Post Filtre)  | `/api/comments/?post={id}`     | ![](https://img.shields.io/badge/GET-2ea44f?style=flat-square)    | Belirli bir gönderiye ait yorumları filtreler.        |
 | Yorum Listesi (Email Filtre) | `/api/comments/?email={email}` | ![](https://img.shields.io/badge/GET-2ea44f?style=flat-square)    | Belirli bir e-posta adresine ait yorumları filtreler. |
 | Yorum Oluştur                | `/api/comments/`               | ![](https://img.shields.io/badge/POST-007ec6?style=flat-square)   | Yeni bir yorum oluşturur.                             |
 | Yorum Detayı                 | `/api/comments/{id}/`          | ![](https://img.shields.io/badge/GET-2ea44f?style=flat-square)    | Belirtilen ID'ye sahip yorumu getirir.                |
