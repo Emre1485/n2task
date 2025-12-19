@@ -2,7 +2,7 @@ from rest_framework import serializers
 from api.models.accounts import Address, Company, Geo, User
 
 class CompanySerializer(serializers.ModelSerializer):
-    """User serializer icinde nested olarak kullanilan sirket bilgisi."""
+    """User serializer icindeki sirket bilgisi."""
     class Meta:
         model = Company
         fields = ['name']
@@ -15,8 +15,8 @@ class GeoSerializer(serializers.ModelSerializer):
 
 class AddressSerializer(serializers.ModelSerializer):
     """
-    Adres bilgilerini ve bagli oldugu Geo (koordinat) verisini yonetir.  
-    UserSerializer tarafindan nested yapı olarak cagirilir.
+    Adres bilgilerini ve bagli oldugu Geo verisini yonetir.  
+    UserSerializer tarafindan cagirilir.
     """
     geo = GeoSerializer()
 
@@ -26,12 +26,7 @@ class AddressSerializer(serializers.ModelSerializer):
 
 
 class UserSerializer(serializers.ModelSerializer):
-    """
-    Kullanici profilinin tamamini (Address, Geo, Company dahil) yonetir.  
-
-    Standart CRUD islemlerinin haricinde, create ve update metodlari   
-    override edilerek nested verilerin yazilmasi ve guncellenmesi saglanir.
-    """
+    """Kullanici profilinin tamamini (Address, Geo, Company) yonetir."""
     address = AddressSerializer()
     company = CompanySerializer()
 
@@ -41,7 +36,6 @@ class UserSerializer(serializers.ModelSerializer):
 
     def create(self, validated_data):
         """
-        Nested veri yapisiyla yeni kullanici olusturur.
         Bu metot varsayilan create islemini override eder.
         Tek bir JSON payload icindeki 'address', 'geo' ve 'company' verilerini
         ayristirir ve sirayla kaydeder.
@@ -65,7 +59,7 @@ class UserSerializer(serializers.ModelSerializer):
     
     def update(self, instance, validated_data):
         """
-        Nested veri yapisiyla kullaniciyi ve iliskili verileri gunceller.
+        Kullaniciyi ve iliskili verileri gunceller.
 
         Bu metot varsayilan update islemini override eder.
         Payload icerisindeki 'address', 'geo' ve 'company' verilerini ayristirip

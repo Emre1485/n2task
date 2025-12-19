@@ -54,12 +54,17 @@ class AccountTests(TestCase):
 
     # GET /api/users/
     def test_list_users(self):
+        """Kullanici listesinin basarili sekilde dondugunu kontrol eder."""
         response = self.client.get('/api/users/')
         self.assertEqual(response.status_code, status.HTTP_200_OK)
         self.assertGreaterEqual(len(response.data), 1)
 
     # POST /api/users/
     def test_create_user_nested(self):
+        """
+        Nested yapida gelen verinin (User->Address->Geo) 
+        tek seferde dogru sekilde ayristirilarak kaydedilmesini test eder.
+        """
         response = self.client.post('/api/users/', self.valid_payload, format='json')
         
         self.assertEqual(response.status_code, status.HTTP_201_CREATED)
@@ -73,6 +78,7 @@ class AccountTests(TestCase):
 
     # GET /api/users/{id}/
     def test_retrieve_user(self):
+        """Kullanici detayinin ve iliskili verilerin dogru geldigini test eder."""
         response = self.client.get(f'/api/users/{self.user.id}/')
         
         self.assertEqual(response.status_code, status.HTTP_200_OK)
@@ -82,6 +88,7 @@ class AccountTests(TestCase):
 
     # PATCH /api/users/{id}/
     def test_update_user_partial(self):
+        """PATCH istegi ile kullanici verisinin kismen guncellenmesini test eder."""
         data = {"name": "İsim Değişti"}
         
         response = self.client.patch(f'/api/users/{self.user.id}/', data, format='json')
@@ -92,6 +99,7 @@ class AccountTests(TestCase):
 
     # DELETE /api/users/{id}/
     def test_delete_user(self):
+        """Kullanici silindiginde, iliskili oldugu Adres kaydinin da silinip silinmedigini test eder."""
         user_id = self.user.id
         self.assertTrue(Address.objects.filter(user_id=user_id).exists())
         response = self.client.delete(f'/api/users/{user_id}/')
@@ -105,6 +113,7 @@ class AccountTests(TestCase):
 
     # GET /api/users/{id}/posts/
     def test_action_posts(self):
+        """UserViewSet uzerindeki /posts/ action'inin dogru filtreleme yaptigini test eder."""
         Post.objects.create(user=self.user, title="Test Post", body="Content")
         response = self.client.get(f'/api/users/{self.user.id}/posts/')
         self.assertEqual(response.status_code, status.HTTP_200_OK)
@@ -113,6 +122,7 @@ class AccountTests(TestCase):
 
     # GET /api/users/{id}/albums/
     def test_action_albums(self):
+        """Kullaniciya ait albumlerin listelenmesini test eder."""
         Album.objects.create(user=self.user, title="Test Album")
         
         response = self.client.get(f'/api/users/{self.user.id}/albums/')
@@ -121,6 +131,7 @@ class AccountTests(TestCase):
 
     # GET /api/users/{id}/todos/
     def test_action_todos(self):
+        """Kullaniciya ait gorevlerin listelenmesini test eder."""
         Todo.objects.create(user=self.user, title="Test Todo", completed=False)
         
         response = self.client.get(f'/api/users/{self.user.id}/todos/')

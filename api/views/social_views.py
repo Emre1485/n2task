@@ -7,7 +7,7 @@ from django.views.decorators.cache import cache_page
 
 @method_decorator(cache_page(60*1), name='list')
 class PostViewSet(viewsets.ModelViewSet):
-    """Gonderi islemlerini yonetir."""
+    """Gonderi islemleri"""
     queryset = Post.objects.all()
     serializer_class = PostSerializer
     filter_backends = [DjangoFilterBackend]
@@ -15,7 +15,7 @@ class PostViewSet(viewsets.ModelViewSet):
 
 @method_decorator(cache_page(60*1), name='list')
 class CommentViewSet(viewsets.ModelViewSet):
-    """Yorum islemlerini yonetir."""
+    """Yorum islemleri"""
     queryset = Comment.objects.all()
     serializer_class = CommentSerializer
     filter_backends = [DjangoFilterBackend]
@@ -23,7 +23,7 @@ class CommentViewSet(viewsets.ModelViewSet):
 
 @method_decorator(cache_page(60*3), name='list')
 class AlbumViewSet(viewsets.ModelViewSet):
-    """Album islemlerini yonetir."""
+    """Album islemleri"""
     queryset = Album.objects.all()
     serializer_class = AlbumSerializer
     filter_backends = [DjangoFilterBackend]
@@ -31,7 +31,7 @@ class AlbumViewSet(viewsets.ModelViewSet):
 
 @method_decorator(cache_page(60*3), name='list')
 class PhotoViewSet(viewsets.ModelViewSet):
-    """Fotograf islemlerini yonetir."""
+    """Fotograf islemleri"""
     queryset = Photo.objects.all()
     serializer_class = PhotoSerializer
     filter_backends = [DjangoFilterBackend]

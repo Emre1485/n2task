@@ -5,9 +5,6 @@ from django_filters.rest_framework import DjangoFilterBackend
 
 class TodoViewSet(viewsets.ModelViewSet):
     """
-    Todo işlemlerini yöneten ViewSet
-    
-    Bu endpoint üzerinden:
     - Tüm görevler listelenebilir.
     - `completed=true` veya `completed=false` ile duruma göre filtreleme yapilabilir.
     - `user={id}` parametresi ile belli bir kullanicinin görevleri sorgulanabilir.

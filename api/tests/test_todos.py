@@ -28,6 +28,7 @@ class TodoTests(TestCase):
             
     # GET /api/todos/ 
     def test_list_todos(self):
+        """Tum gorevlerin listelenmesini dogrular."""
         response = self.client.get('/api/todos/')
         self.assertEqual(response.status_code, status.HTTP_200_OK)
 
@@ -35,6 +36,7 @@ class TodoTests(TestCase):
 
     # POST /api/todos/
     def test_create_todo(self):
+        """Yeni gorev olusturmayi test eder."""
         payload = {
             "userId": self.user.id,
             "title": "Yeni Görev",
@@ -48,6 +50,7 @@ class TodoTests(TestCase):
 
     # GET /api/todos/{id}/
     def test_retrieve_todo(self):
+        """gorev detayinin dogru geldigini test eder."""
         response = self.client.get(f'/api/todos/{self.todo_pending.id}/')
         
         self.assertEqual(response.status_code, status.HTTP_200_OK)
@@ -55,6 +58,10 @@ class TodoTests(TestCase):
 
     # PATCH /api/todos/{id}/
     def test_update_todo_status(self):
+        """
+        Gorev durumunun guncellenmesini test eder. 
+        Degisikligin veritabanina yansidigini dogrular.
+        """
         response = self.client.patch(
             f'/api/todos/{self.todo_pending.id}/', 
             {"completed": True}, 
@@ -69,6 +76,7 @@ class TodoTests(TestCase):
 
     # DELETE /api/todos/{id}/
     def test_delete_todo(self):
+        """Gorev silme islemini ve veritabanindan kaldirildigini dogrular."""
         response = self.client.delete(f'/api/todos/{self.todo_done.id}/')
         
         self.assertEqual(response.status_code, status.HTTP_204_NO_CONTENT)
@@ -76,6 +84,9 @@ class TodoTests(TestCase):
 
     # GET /api/todos/?user={id}
     def test_filter_todos_by_user(self):
+        """
+        user={id} filtresine gore gorevleri getirmeyi test eder.
+        """
         other_user = User.objects.create(name="Other Kullanici", username="otherK", email="o@k.com")
         Todo.objects.create(user=other_user, title="Other Task", completed=False)
 
@@ -88,6 +99,7 @@ class TodoTests(TestCase):
 
     # GET /api/todos/?completed=true
     def test_filter_todos_completed_true(self):
+        """sadece tamamlanmis gorevleri getirdigini test eder."""
         response = self.client.get('/api/todos/?completed=true')
         
         self.assertEqual(response.status_code, status.HTTP_200_OK)
@@ -98,6 +110,7 @@ class TodoTests(TestCase):
 
     # GET /api/todos/?completed=false
     def test_filter_todos_completed_false(self):
+        """sadece tamamlanmamis gorevleri getirdigini test eder."""
         response = self.client.get('/api/todos/?completed=false')
         
         self.assertEqual(response.status_code, status.HTTP_200_OK)
@@ -107,6 +120,7 @@ class TodoTests(TestCase):
 
     # GET /api/todos/?user={id}&completed=false
     def test_complex_filter(self):
+        """Birden fazla filtre parametresinin (user, completed) ayni anda calistigini test eder."""
         response = self.client.get(f'/api/todos/?user={self.user.id}&completed=false')
     
         self.assertEqual(response.status_code, status.HTTP_200_OK)

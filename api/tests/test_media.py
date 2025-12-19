@@ -26,16 +26,21 @@ class MediaTests(TestCase):
         )
 
 
-    # 1. ALBUM TESTLERİ
+    # ALBUM TESTLERİ
 
     # GET /api/albums/
     def test_list_albums(self):
+        """Tum albumlerin listelenmesi kontrolunu yapar."""
         response = self.client.get('/api/albums/')
         self.assertEqual(response.status_code, status.HTTP_200_OK)
         self.assertGreaterEqual(len(response.data), 1)
 
     # POST /api/albums/
     def test_create_album(self):
+        """
+        Yeni album olusturma islemini test eder.
+        Frontend formatindaki (userId) payload'in islenmesini ve DB kaydini dogrular.
+        """
         payload = {
             "userId": self.user.id,
             "title": "Yeni Albüm"
@@ -48,6 +53,10 @@ class MediaTests(TestCase):
 
     # GET /api/albums/?user={id}
     def test_filter_albums_by_user(self):
+        """
+        user={id} parametresi ile yapilan filtrelemenin dogru calistigini,
+        baska kullanicilara ait verilerin gelmedigini test eder.
+        """
         other_user = User.objects.create(name="X", username="x", email="x@x.com")
         Album.objects.create(user=other_user, title="X Album")
 
@@ -59,20 +68,28 @@ class MediaTests(TestCase):
 
     # DELETE /api/albums/{id}/
     def test_delete_album(self):
+        """Album silme islemini ve veritabanindan kaldirilmasini test eder."""
         response = self.client.delete(f'/api/albums/{self.album.id}/')
         self.assertEqual(response.status_code, status.HTTP_204_NO_CONTENT)
         self.assertFalse(Album.objects.filter(id=self.album.id).exists())
 
-    # 2. PHOTO TESTLERİ
+    # PHOTO TESTLERİ
 
     # GET /api/photos/
     def test_list_photos(self):
+        """Fotograf listeleme endpoint'inin erisilebilir oldugunu test eder."""
         response = self.client.get('/api/photos/')
         self.assertEqual(response.status_code, status.HTTP_200_OK)
         self.assertGreaterEqual(len(response.data), 1)
 
     # POST /api/photos/
     def test_create_photo(self):
+        """
+        Fotograf yukleme islemini test eder.
+        
+        Frontend'den gelen 'thumbnailUrl' alaninin,
+        Serializer tarafindan 'thumbnail_url' alanina dogru map'lendigini kontrol eder.
+        """
         payload = {
             "albumId": self.album.id,
             "title": "Yeni Foto",
@@ -89,6 +106,7 @@ class MediaTests(TestCase):
 
     # GET /api/photos/?album={id}
     def test_filter_photos_by_album(self):
+        """album={id} parametresi ile fotograflarin dogru albume gore filtrelendigini test eder."""
         other_album = Album.objects.create(user=self.user, title="Other")
         Photo.objects.create(album=other_album, title="Other Photo", url="...", thumbnail_url="...")
 

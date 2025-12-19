@@ -6,7 +6,7 @@ class PostSerializer(serializers.ModelSerializer):
     """
     Post verilerini isler.
 
-    Frontend tarafinda userId beklendigi icin,  
+    client tarafinda userId beklendigi icin,  
     DB tarafindaki user alanini `source` argumani ile map'lenir.
     """
     userId = serializers.PrimaryKeyRelatedField(source='user', queryset=User.objects.all())
@@ -26,10 +26,7 @@ class CommentSerializer(serializers.ModelSerializer):
         fields = ['postId', 'id', 'name', 'email', 'body']
 
 class PostWithCommentsSerializer(serializers.ModelSerializer):
-    """
-    Post detayini ve altindaki yorumlari birlikte doner.  
-    Read only amaclidir.
-    """
+    """Post detayini ve altindaki yorumlari birlikte doner."""
     userId = serializers.IntegerField(source='user_id', read_only=True)
     comments = CommentSerializer(many=True, read_only=True)
 
@@ -52,7 +49,7 @@ class AlbumSerializer(serializers.ModelSerializer):
 class PhotoSerializer(serializers.ModelSerializer):
     """
     Fotograf verilerini yonetir.  
-    thumbnailUrl (frontend) -> thumbnail_url (backend) donusumu yapilir.
+    thumbnailUrl (frontend) -> thumbnail_url (backend) 
     """
     albumId = serializers.PrimaryKeyRelatedField(source='album', queryset=Album.objects.all())
     thumbnailUrl = serializers.URLField(source='thumbnail_url')
@@ -62,9 +59,7 @@ class PhotoSerializer(serializers.ModelSerializer):
 
 
 class AlbumWithPhotosSerializer(serializers.ModelSerializer):
-    """
-    Album detayini icindeki fotograflarla birlikte (Nested) getirir.
-    """
+    """Album detayini icindeki fotograflarla birlikte getirir."""
     userId = serializers.IntegerField(source='user_id', read_only=True)
     photos = PhotoSerializer(many=True, read_only=True)
     class Meta:

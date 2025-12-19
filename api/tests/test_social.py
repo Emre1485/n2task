@@ -30,12 +30,17 @@ class SocialTests(TestCase):
 
     # GET /api/posts/
     def test_list_posts(self):
+        """Tum gonderilerin listelenmesini test eder."""
         response = self.client.get('/api/posts/')
         self.assertEqual(response.status_code, status.HTTP_200_OK)
         self.assertGreaterEqual(len(response.data), 1)
 
     # POST /api/posts/
     def test_create_post(self):
+        """
+        Yeni gonderi olusturmayi test eder.
+        Frontend'den gelen 'userId' alaninin backend'de dogru iliskilendirildigini kontrol eder.
+        """
         payload = {
             "userId": self.user.id,
             "title": "Yeni Haber",
@@ -49,6 +54,10 @@ class SocialTests(TestCase):
     
     # GET /api/posts/?user={id}
     def test_filter_posts_by_user(self):
+        """
+        user={id} parametresi ile gonderilerin kullanici bazli filtrelenmesini test eder.
+        Baska kullaniciya ait gonderilerin listeye karismadigini dogrular.
+        """
         other_user = User.objects.create(name="Other", username="other", email="other@t.com")
         Post.objects.create(user=other_user, title="Other Post", body="...")
         response = self.client.get(f'/api/posts/?user={self.user.id}')
@@ -57,14 +66,16 @@ class SocialTests(TestCase):
         self.assertEqual(len(response.data), 1)
         self.assertEqual(response.data[0]['userId'], self.user.id)
 
-    # GET /api/posts/{id}/
+    # PATCH /api/posts/{id}/
     def test_update_post(self):
+        """gonderi basliginin guncellenmesini test eder."""
         response = self.client.patch(f'/api/posts/{self.post.id}/', {"title": "Editlendi"}, format='json')
         self.assertEqual(response.status_code, status.HTTP_200_OK)
         self.assertEqual(response.data['title'], "Editlendi")
 
     # DELETE /api/posts/{id}/
     def test_delete_post(self):
+        """Gonderi silme islemini ve veritabanindan kaldirilmasini test eder."""
         response = self.client.delete(f'/api/posts/{self.post.id}/')
         self.assertEqual(response.status_code, status.HTTP_204_NO_CONTENT)
         self.assertFalse(Post.objects.filter(id=self.post.id).exists())
@@ -73,12 +84,14 @@ class SocialTests(TestCase):
 
     # GET /api/comments/
     def test_list_comments(self):
+        """Yorum listeleme endpoint'inin erisilebilir oldugunu test eder."""
         response = self.client.get('/api/comments/')
         self.assertEqual(response.status_code, status.HTTP_200_OK)
         self.assertGreaterEqual(len(response.data), 1)
 
     # POST /api/comments/
     def test_create_comment(self):
+        """Bir gonderiye yorum yapilmasini ve 'postId' iliskisinin kurulmasini test eder."""
         payload = {
             "postId": self.post.id,
             "name": "Yeni Yorum",
@@ -92,6 +105,7 @@ class SocialTests(TestCase):
 
     # GET /api/comments/?post={id}
     def test_filter_comments_by_post(self):
+        """Yorumlarin bagli olduklari gonderiye gore filtrelenmesini test eder."""
         other_post = Post.objects.create(user=self.user, title="X", body="Y")
         Comment.objects.create(post=other_post, name="X", email="x@x.com", body="Z")
 
@@ -103,6 +117,7 @@ class SocialTests(TestCase):
 
     # GET /api/comments/?email={email}
     def test_filter_comments_by_email(self):
+        """Yorumlarin e-posta adresine gore filtrelenmesini test eder."""
         target_email = "fan@test.com"
         response = self.client.get(f'/api/comments/?email={target_email}')
         

@@ -13,9 +13,6 @@ from django.views.decorators.cache import cache_page
 
 class UserViewSet(viewsets.ModelViewSet):
     """
-    CRUD Kullanici islemlerini ve profil detaylarini yonetir.
-
-    Teknik Detaylar:  
     - `select_related` kullanilarak Address, Geo ve Company tablolari tek sorguda cekilir.  
     - Kullanici profiline bagli alt kaynaklara (Posts, Albums, Todos) erisim icin ozel actionlar tanimlanmistir.  
     """
@@ -25,7 +22,9 @@ class UserViewSet(viewsets.ModelViewSet):
     @method_decorator(cache_page(60*1))
     @action(detail=True, methods=['get'])
     def posts(self, request, pk=None):
-        """Kullaniciya ait gonderileri listeler."""
+        """
+        Kullaniciya ait gonderileri listeler.
+        """
         user = self.get_object()
         posts = user.posts.all()
         serializer = PostSerializer(posts, many=True)
@@ -34,7 +33,9 @@ class UserViewSet(viewsets.ModelViewSet):
     @method_decorator(cache_page(60*1))
     @action(detail=True, methods=['get'])
     def albums(self, request, pk=None):
-        """ Kullaniciya ait albumleri listeler."""
+        """
+        Kullaniciya ait albumleri listeler.
+        """
         user = self.get_object()
         albums = user.albums.all()
         serializer = AlbumSerializer(albums, many=True)
@@ -45,7 +46,6 @@ class UserViewSet(viewsets.ModelViewSet):
     def todos(self, request, pk=None):
         """
         Kullaniciya ait gorevleri listeler.
-
         Todo islemlerinde sık yazma yapilabilir diye  
         cacheleme devre dısı.
         """
